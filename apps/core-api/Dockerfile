@@ -1,40 +1,19 @@
-# Fase 1: Build - Usiamo un'immagine Node.js completa per installare e compilare
+# Fase 1: Build
 FROM node:18-alpine AS builder
-
-# Imposta la directory di lavoro all'interno del container
 WORKDIR /app
-
-# Copia i file package.json e il lockfile
 COPY package.json ./
-COPY pnpm-lock.yaml ./
-COPY prisma ./prisma/
-
-# Installa pnpm (o npm/yarn se usi quelli) e le dipendenze
-RUN npm install -g pnpm
-RUN pnpm install
-
-# Copia il resto del codice sorgente dell'applicazione
+# La riga pnpm-lock.yaml è stata rimossa
+RUN npm install
 COPY . .
+RUN npm run build
+# Prisma generate è necessario solo se usi Prisma nel backend
+# RUN npx prisma generate
 
-# Esegui il build del codice TypeScript in JavaScript
-RUN pnpm run build
-
-# Esegui la generazione del client Prisma
-RUN pnpm prisma generate
-
-
-# Fase 2: Production - Usiamo un'immagine snella per l'esecuzione
+# Fase 2: Production
 FROM node:18-alpine
-
 WORKDIR /app
-
-# Copia solo i file necessari dalla fase di build
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
-
-# Esponi la porta su cui il tuo server Express è in ascolto (es. 8080)
+# COPY --from=builder /app/prisma ./prisma
 EXPOSE 8080
-
-# Il comando per avviare l'applicazione
 CMD ["node", "dist/main.js"]
