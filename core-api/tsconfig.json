@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ES2021",                       /* Imposta la versione di JavaScript target */
     "module": "commonjs",                      /* Usa il sistema di moduli standard di Node.js */
+    "moduleResolution": "node", // <-- RIGA AGGIUNTA
     "outDir": "./dist",                        /* Cartella dove mettere il codice compilato */
     "rootDir": "./src",                        /* Cartella dove si trova il codice sorgente */
     "strict": true,                            /* Abilita tutti i controlli di tipo stretti */
