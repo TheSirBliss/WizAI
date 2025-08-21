@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Disabilita il compilatore SWC, forzando l'uso di Babel
-  swcMinify: false,
-
+  // Disabilita la generazione di source maps in produzione per risparmiare memoria
   productionBrowserSourceMaps: false,
+
+  // Mantiene la configurazione precedente per ridurre l'uso della CPU
   experimental: {
     workerThreads: false,
     cpus: 1
