@@ -1,0 +1,38 @@
+steps:
+# 1. Costruisci l'immagine Docker del core-api
+- name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build',
+    '-t',
+    'europe-west1-docker.pkg.dev/$PROJECT_ID/wizai-repo/core-api:$COMMIT_SHA',
+    './apps/core-api'
+  ]
+  id: 'Build API Container'
+
+# 2. Pusha l'immagine appena costruita su Google Artifact Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/wizai-repo/core-api:$COMMIT_SHA']
+  id: 'Push API Container'
+
+# 3. Esegui il deploy della nuova immagine su Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+    - 'run'
+    - 'deploy'
+    - 'core-api' # <--- NOME DEL TUO SERVIZIO SU CLOUD RUN
+    - '--image'
+    - 'europe-west1-docker.pkg.dev/$PROJECT_ID/wizai-repo/core-api:$COMMIT_SHA'
+    - '--region'
+    - 'europe-west12' # <--- REGIONE DEL TUO SERVIZIO CLOUD RUN
+    - '--platform'
+    - 'managed'
+    - '--allow-unauthenticated' # Permette l'accesso pubblico (necessario per un'API)
+    # --- COLLEGAMENTO AI SEGRETI ---
+    # Aggiungi una riga --update-secrets per ogni segreto necessario
+    - '--update-secrets=DATABASE_URL=DATABASE_URL:latest,STRIPE_API_KEY=STRIPE_API_KEY:latest'
+  id: 'Deploy to Cloud Run'
+
+# Specifica quali immagini container salvare
+images:
+- 'europe-west1-docker.pkg.dev/$PROJECT_ID/wizai-repo/core-api:$COMMIT_SHA'
