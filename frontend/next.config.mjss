@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Puoi aggiungere qui configurazioni specifiche di Next.js se necessario
+  // Questa configurazione risolve i problemi di memoria su Vercel
+  experimental: {
+    workerThreads: false,
+    cpus: 1
+  },
 };
 
 export default nextConfig;
