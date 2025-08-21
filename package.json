@@ -1,0 +1,11 @@
+{
+  "name": "wizai-monorepo",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:api": "pnpm --filter core-api dev"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
